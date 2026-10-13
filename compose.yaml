@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:18-alpine
+    container_name: facilities-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: facilities
+      POSTGRES_PASSWORD: facilities
+      POSTGRES_DB: facilities
+    ports:
+      - '5432:5432'
+    volumes:
+      # Postgres 18+ wants one mount here, not at /data — it restart-loops otherwise.
+      - postgres-data:/var/lib/postgresql
+    # `npm run db:up` passes --wait, so migrations never race first-boot init.
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U facilities -d facilities']
+      interval: 2s
+      timeout: 3s
+      retries: 15
+
+  redis:
+    image: redis:8-alpine
+    container_name: facilities-redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 2s
+      timeout: 3s
+      retries: 15
+
+volumes:
+  postgres-data:

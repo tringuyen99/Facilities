@@ -1,0 +1,6 @@
+# pnpm blocks lifecycle scripts by default. These genuinely need them: Prisma
+# fetches its query engine, argon2 resolves a prebuilt native binary.
+allowBuilds:
+  prisma: true
+  '@prisma/engines': true
+  '@node-rs/argon2': true

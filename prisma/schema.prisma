@@ -1,0 +1,58 @@
+generator client {
+  provider        = "prisma-client"
+  output          = "../src/generated/prisma"
+  runtime         = "nodejs"
+  moduleFormat    = "esm"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  extensions = [pg_trgm]
+}
+
+model Facility {
+  id        String @id
+  name      String
+  address   String
+  latitude  Float
+  longitude Float
+
+  amenities FacilityAmenity[]
+
+  // Trigram GIN: without these, `ILIKE '%x%'` degrades linearly with row count.
+  @@index([name(ops: raw("gin_trgm_ops"))], type: Gin)
+  @@index([address(ops: raw("gin_trgm_ops"))], type: Gin)
+  // Serves the ORDER BY of every search. A GIN index cannot supply ordering, so
+  // without this a browse seq-scans and sorts the whole table — at offset 50000
+  // that spilled to disk (external merge, 8MB). Matches the (name, id)
+  // tiebreaker in operations.ts exactly.
+  @@index([name, id])
+}
+
+model Amenity {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  facilities FacilityAmenity[]
+}
+
+/// Explicit rather than implicit m-n, so we control its columns and indexes.
+model FacilityAmenity {
+  facilityId String
+  amenityId  Int
+
+  facility Facility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  amenity  Amenity  @relation(fields: [amenityId], references: [id], onDelete: Cascade)
+
+  @@id([facilityId, amenityId])
+  // Reverse of the PK, for "which facilities have amenity X".
+  @@index([amenityId, facilityId])
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}

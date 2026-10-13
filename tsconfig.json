@@ -1,0 +1,40 @@
+{
+	"compilerOptions": {
+		/* Language and environment */
+		"target": "es2024",
+		"lib": ["es2024"],
+		"module": "nodenext",
+		"moduleResolution": "nodenext",
+
+		/* Source files are run directly by Node's native type stripping, so
+       relative imports are written with .ts extensions. tsc rewrites them
+       to .js when emitting to dist/. */
+		"allowImportingTsExtensions": true,
+		"rewriteRelativeImportExtensions": true,
+		"verbatimModuleSyntax": true,
+		"erasableSyntaxOnly": true,
+
+		/* Emit — this config is for typechecking and editors only; the
+       emitting build lives in tsconfig.build.json. */
+		"noEmit": true,
+		"sourceMap": true,
+		"declaration": false,
+
+		/* Type checking */
+		"strict": true,
+		"noUncheckedIndexedAccess": true,
+		"exactOptionalPropertyTypes": true,
+		"noImplicitOverride": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+
+		/* Interop */
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"resolveJsonModule": true,
+		"skipLibCheck": true
+	},
+	"include": ["src/**/*.ts", "scripts/**/*.ts", "prisma.config.ts"],
+	"exclude": ["node_modules", "dist", "src/generated"]
+}

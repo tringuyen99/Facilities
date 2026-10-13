@@ -1,0 +1,36 @@
+{
+	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+	"files": {
+		"includes": [
+			"**",
+			"!src/generated",
+			"!dist",
+			"!data",
+			"!prisma/migrations",
+			"!assets",
+			"!scripts"
+		]
+	},
+	"formatter": {
+		"enabled": true
+	},
+	"linter": {
+		"enabled": true,
+		"domains": {
+			"project": "recommended",
+			"test": "recommended"
+		},
+		"rules": {
+			"preset": "recommended",
+			"suspicious": {
+				"noConsole": "error"
+			},
+			"nursery": {
+				"noFloatingPromises": "error"
+			},
+			"style": {
+				"useBlockStatements": "error"
+			}
+		}
+	}
+}
